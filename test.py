@@ -1,9 +1,31 @@
-from csv import writer
+import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+import io
+from telebot import types
 
-# The data assigned to the list 
-list_data = ['123', 'S123h', 'Sci123e']
+TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
 
-with open('CSVFILE.csv', 'a', newline='') as f_object:
-    writer_object = writer(f_object)
-    writer_object.writerow(list_data)
-    f_object.close()
+bot = telebot.TeleBot(TELEGRAM_TOKEN)
+
+from links_funcs import write_link
+@bot.message_handler(func=lambda message: message.text == "Ссылки")  # получение ссылок по команде /links
+def links(message):
+    links_msg = write_link()
+    bot.send_message(message.chat.id, links_msg)
+
+@bot.message_handler(func=lambda message: message.text == "Контакты")  # получение списка контаков по команде /contacts
+def contacts(message):
+    path = r'C:\\Users\\1\\PycharmProjects\\telegram_bot\\contacts.txt'
+    with io.open(path, encoding='utf-8') as file:
+        text = file.read()
+        bot.send_message(message.chat.id, text)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    buttons = ["Ссылки", "Контакты"]
+    keyboard.add(*buttons)
+    bot.send_message(message.chat.id, 'Wait...', reply_markup=keyboard)
+
+
+bot.polling(none_stop=True)
