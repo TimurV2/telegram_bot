@@ -9,7 +9,7 @@ TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
-@bot.message_handler
+@bot.message_handler()
 def text_message_handler(message):
     match message.text:
         case "Ссылки":
