@@ -24,6 +24,6 @@ def write_link():
             text += line
         text = text.replace(',', '')
         if text == '':
-            text = 'Извините, тут пока нет ниодной ссылки'
+            text = 'Извините, тут пока нет ни одной ссылки'
         return text
 
