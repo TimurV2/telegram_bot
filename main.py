@@ -6,7 +6,7 @@ import csv
 
 # TODO: - add config to gide token and other info
 bot = telebot.TeleBot('5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E')  # Создаем "bot" передаём в него токен бота в TG
-admins = [993945655]  # будущий лист админов
+admins = [993945655, 1210574996]  # будущий лист админов
 
 # TODO: - change buttons & start command
 from users_hub import add_user
@@ -50,8 +50,12 @@ def help(message):
                                       '/feedback - для отправки отзыва / предложений / сообщения\n'
                                       '/start - /// пока в доработке ///\n'
                                       '/links - полезные ссылки\n'
-                                      '/notify - для рассылки сообщения всем участникам бота\n'
-                                      '/linkpush - для сохранения ссылки в боте\n')
+                                      '/notify - для рассылки сообщения всем участникам бота; NB: Пересылается только текст\n')
+    if message.chat.id in admins:
+        bot.send_message(message.chat.id, 'Лог команд для избранных:\n'
+                                          '/linkpush - для сохранения ссылки в боте\n'
+                                          '/// Будут добавляться ещё ///')
+
 
 
 from links_funcs import find_url, write_link
@@ -61,7 +65,7 @@ def link_push(message):
     bot.register_next_step_handler(sent, find_url)
 
 
-@bot.message_handler(commands=['links']) # получение ссылок по команде /links
+@bot.message_handler(commands=['links'])  # получение ссылок по команде /links
 def links(message):
     links_msg = write_link()
     bot.send_message(message.chat.id, links_msg)
