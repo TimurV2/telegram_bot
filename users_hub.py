@@ -25,7 +25,7 @@ def sent_notify(message):
     with open('users_hub.csv', 'r') as readable_file:
         reader = csv.DictReader(readable_file)
         for row in reader:
-            if str(avoid_id) not in row['ID']:
+            if (str(avoid_id) not in row['ID']) and (message.text not in ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех"]):
                 curr_id = int(row['ID'])
-                bot.send_message(curr_id, f'<u>Это сообщение было отправлено от пользователя '
+                bot.send_message(curr_id, f'<u>Общее уведомление от пользователя - '
                                           f'@{message.from_user.username}\n</u>' + msg, parse_mode='html')
