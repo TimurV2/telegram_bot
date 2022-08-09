@@ -2,11 +2,11 @@ import telebot
 import io
 from telebot import types
 from links_funcs import find_url, write_link
-from users_hub import add_user, sent_notify, frw_msg
+from users_hub import add_user, sent_notify, frw_msg, ask_horo
 import os
 import requests
 from bs4 import BeautifulSoup
-from test import ask_horo
+
 
 TELEGRAM_TOKEN = str(os.environ['bot_token'])
 urls = ['https://horo.mail.ru/prediction/aries/today/',
