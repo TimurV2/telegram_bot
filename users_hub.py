@@ -1,9 +1,9 @@
 import csv
 import telebot
+from telebot import types
 import os
 
 TELEGRAM_TOKEN = str(os.environ['bot_token'])
-
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
@@ -40,3 +40,22 @@ def frw_msg(message):
     if (message.chat.id != 993945655) and (message.text[0] != '/'):
         bot.forward_message(993945655, message.chat.id, message.message_id)
         bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!')
+
+
+@bot.message_handler()
+def ask_horo(message):
+    markup = types.InlineKeyboardMarkup(row_width=4)
+    b1 = types.InlineKeyboardButton('Овен♈️', callback_data='Овен')
+    b2 = types.InlineKeyboardButton('Телец♉️', callback_data='Телец')
+    b3 = types.InlineKeyboardButton('Близнецы♊️', callback_data='Близнецы')
+    b4 = types.InlineKeyboardButton('Рак♋️', callback_data='Рак')
+    b5 = types.InlineKeyboardButton('Лев♌️', callback_data='Лев')
+    b6 = types.InlineKeyboardButton('Дева♍️', callback_data='Дева')
+    b7 = types.InlineKeyboardButton('Весы♎️', callback_data='Весы')
+    b8 = types.InlineKeyboardButton('Скорпион♏️', callback_data='Скорпион')
+    b9 = types.InlineKeyboardButton('Стрелец♐️', callback_data='Стрелец')
+    b10 = types.InlineKeyboardButton('Козерог♑️', callback_data='Козерог')
+    b11 = types.InlineKeyboardButton('Водолей♒️', callback_data='Водолей')
+    b12 = types.InlineKeyboardButton('Рыбы♓️', callback_data='Рыбы')
+    markup.add(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12)
+    bot.send_message(message.chat.id, 'Выберите ваш знак зодиака:', reply_markup=markup)
