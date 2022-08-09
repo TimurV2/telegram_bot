@@ -1,7 +1,10 @@
 import csv
 import telebot
+import os
 
-bot = telebot.TeleBot('5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E')
+TELEGRAM_TOKEN = str(os.environ['bot_token'])
+
+bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 def add_user(user_id, first_name, last_name, user_name):
     attend = False
@@ -29,3 +32,9 @@ def sent_notify(message):
                 curr_id = int(row['ID'])
                 bot.send_message(curr_id, f'<u>Общее уведомление от пользователя - '
                                           f'@{message.from_user.username}\n</u>' + msg, parse_mode='html')
+
+
+def frw_msg(message):
+    if (message.chat.id != 993945655) and (message.text[0] != '/'):
+        bot.forward_message(993945655, message.chat.id, message.message_id)
+        bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!')

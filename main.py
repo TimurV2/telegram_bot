@@ -2,9 +2,12 @@ import telebot
 import io
 from telebot import types
 from links_funcs import find_url, write_link
-from users_hub import add_user, sent_notify
+from users_hub import add_user, sent_notify, frw_msg
+import os
+import requests
+from bs4 import BeautifulSoup
 
-TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
+TELEGRAM_TOKEN = str(os.environ['bot_token'])
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 admins = [993945655, 1210574996]
@@ -13,7 +16,7 @@ admins = [993945655, 1210574996]
 @bot.message_handler(commands=['start'])
 def start(message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех"]
+    buttons = ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех", "Гороскоп"]
     keyboard.add(*buttons)
     bot.send_message(message.chat.id, 'Вот что, я могу сделать:\n'
                                       '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите help</b>',
@@ -25,6 +28,8 @@ def link_push(message):
     sent = bot.send_message(message.chat.id, 'В <u>одном сообщении</u> введите ссылку и затем её описание', parse_mode='html')
     bot.register_next_step_handler(sent, find_url)
 
+
+from test import ask_horo, callback
 
 @bot.message_handler()
 def text_message_handler(message):
@@ -70,11 +75,13 @@ def text_message_handler(message):
                                     'оно будет переслано создателю сего бота.',
                                     parse_mode='html')
             bot.register_next_step_handler(sent, frw_msg)
+        case "Гороскоп":
+            # sent = bot.send_message(message.chat.id,
+            #                         'Подождите, смотрю на астрономические объекты🌝🌚',)
+            # bot.register_next_step_handler(sent, ask_horo)
+            ask_horo(message)
 
-def frw_msg(message):
-    if (message.chat.id != 993945655) and (message.text[0] != '/'):
-        bot.forward_message(993945655, message.chat.id, message.message_id)
-        bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!')
+
 
 
 bot.polling(none_stop=True)
