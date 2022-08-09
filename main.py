@@ -6,9 +6,21 @@ from users_hub import add_user, sent_notify, frw_msg
 import os
 import requests
 from bs4 import BeautifulSoup
+from test import ask_horo
 
 TELEGRAM_TOKEN = str(os.environ['bot_token'])
-
+urls = ['https://horo.mail.ru/prediction/aries/today/',
+        'https://horo.mail.ru/prediction/taurus/today/',
+        'https://horo.mail.ru/prediction/gemini/today/',
+        'https://horo.mail.ru/prediction/cancer/today/',
+        'https://horo.mail.ru/prediction/leo/today/',
+        'https://horo.mail.ru/prediction/virgo/today/',
+        'https://horo.mail.ru/prediction/libra/today/',
+        'https://horo.mail.ru/prediction/scorpio/today/',
+        'https://horo.mail.ru/prediction/sagittarius/today/',
+        'https://horo.mail.ru/prediction/capricorn/today/',
+        'https://horo.mail.ru/prediction/aquarius/today/',
+        'https://horo.mail.ru/prediction/pisces/today/']
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 admins = [993945655, 1210574996]
 
@@ -28,8 +40,6 @@ def link_push(message):
     sent = bot.send_message(message.chat.id, 'В <u>одном сообщении</u> введите ссылку и затем её описание', parse_mode='html')
     bot.register_next_step_handler(sent, find_url)
 
-
-from test import ask_horo, callback
 
 @bot.message_handler()
 def text_message_handler(message):
@@ -76,12 +86,44 @@ def text_message_handler(message):
                                     parse_mode='html')
             bot.register_next_step_handler(sent, frw_msg)
         case "Гороскоп":
-            # sent = bot.send_message(message.chat.id,
-            #                         'Подождите, смотрю на астрономические объекты🌝🌚',)
-            # bot.register_next_step_handler(sent, ask_horo)
             ask_horo(message)
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback(call):
+    if call.message:
+        match call.data:
+            case "Овен":
+                url = urls[0]
+            case "Телец":
+                url = urls[1]
+            case "Близнецы":
+                url = urls[2]
+            case "Рак":
+                url = urls[3]
+            case "Лев":
+                url = urls[4]
+            case "Дева":
+                url = urls[5]
+            case "Весы":
+                url = urls[6]
+            case "Скорпион":
+                url = urls[7]
+            case "Стрелец":
+                url = urls[8]
+            case "Козерог":
+                url = urls[9]
+            case "Водолей":
+                url = urls[10]
+            case "Рыбы":
+                url = urls[11]
+
+        responce = requests.get(url)
+        soup = BeautifulSoup(responce.text, 'html.parser')
+        prediction = soup.find_all('p')
+        prediction[0] = str(prediction[0]).replace('<p>', '').replace('</p>', '')
+        prediction[1] = str(prediction[1]).replace('<p>', '').replace('</p>', '')
+        bot.send_message(call.message.chat.id, f'{prediction[0]}\n\n' + f'{prediction[1]}')
 
 
 bot.polling(none_stop=True)
