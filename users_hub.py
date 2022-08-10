@@ -1,6 +1,7 @@
 import csv
 import telebot
 from telebot import types
+from helpful_funcs import gen_markup
 import os
 
 TELEGRAM_TOKEN = str(os.environ['bot_token'])
@@ -34,13 +35,13 @@ def sent_notify(message):
                 curr_id = int(row['ID'])
                 bot.send_message(curr_id, f'<u>Общее уведомление от пользователя - '
                                           f'@{message.from_user.username}\n</u>' + msg, parse_mode='html')
-    bot.send_message(message.chat.id, 'Ваше уведомление было отправлено остальным пользователям!')
+    bot.send_message(message.chat.id, 'Ваше уведомление было отправлено остальным пользователям!', reply_markup=gen_markup())
 
 
 def frw_msg(message):
-    if (message.chat.id != 993945655) and (message.text[0] != '/'):
+    if (message.chat.id != 993945655) and (message.text not in ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех", "Гороскоп"]):
         bot.forward_message(993945655, message.chat.id, message.message_id)
-        bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!')
+        bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!', reply_markup=gen_markup())
 
 
 @bot.message_handler()

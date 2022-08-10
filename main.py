@@ -3,6 +3,7 @@ import io
 from telebot import types
 from links_funcs import find_url, write_link
 from users_hub import add_user, sent_notify, frw_msg, ask_horo
+from helpful_funcs import gen_markup
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -27,12 +28,9 @@ admins = [993945655, 1210574996]
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех", "Гороскоп"]
-    keyboard.add(*buttons)
     bot.send_message(message.chat.id, 'Вот что, я могу сделать:\n'
                                       '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите "Помощь"</b>',
-                     parse_mode='html', reply_markup=keyboard)
+                     parse_mode='html', reply_markup=gen_markup())
 
 
 @bot.message_handler(commands=['linkpush'])  # пуш ссылки по команде /linkpush
@@ -46,12 +44,12 @@ def text_message_handler(message):
     match message.text:
         case "Ссылки":
             links_msg = write_link()
-            bot.send_message(message.chat.id, links_msg)
+            bot.send_message(message.chat.id, links_msg, reply_markup=gen_markup())
         case "Контакты":
             path = r'C:\\Users\\1\\PycharmProjects\\telegram_bot\\contacts.txt'
             with io.open(path, encoding='utf-8') as file:
                 text = file.read()
-                bot.send_message(message.chat.id, text)
+                bot.send_message(message.chat.id, text, reply_markup=gen_markup())
         case "Инициализация":
             try:
                 id = message.from_user.id
@@ -59,7 +57,7 @@ def text_message_handler(message):
                 l_name = message.from_user.last_name
                 user_name = message.from_user.username
                 add_user(id, f_name, l_name, user_name)
-                bot.send_message(message.chat.id, 'Поздравляшки! Теперь вы член 8==D')
+                bot.send_message(message.chat.id, 'Поздравляшки! Теперь вы член 8==D', reply_markup=gen_markup())
             except Exception as e:
                 bot.send_message(admins[0], str(e))
         case "Уведомить всех":
@@ -68,16 +66,17 @@ def text_message_handler(message):
                                     parse_mode='html')
             bot.register_next_step_handler(sent, sent_notify)
         case "Помощь":
-            bot.send_message(message.chat.id, 'Лог команд:\n'
-                                              'Контакты - для получения списка контактов преподов\n'
-                                              'Оставить отзыв - для отправки отзыва / предложений / сообщения админу\n'
-                                              '/start - для вызова меню\n'
-                                              'Ссылки - ссылки с важными материалами\n'
-                                              'Уведомить всех - для рассылки сообщения всем участникам бота; NB: Пересылается только текст\n'
-                                              'Инициализация - Платная подписка на рассылки, в базе будет сохранен ваш id, имя, фамилия и username\n')
+            bot.send_message(message.chat.id, 'Лог команд:\n\n'
+                                              'Контакты - для получения списка контактов преподов\n\n'
+                                              'Оставить отзыв - для отправки отзыва / предложений / сообщения админу\n\n'
+                                              '/start - для вызова меню\n\n'
+                                              'Ссылки - ссылки с важными материалами\n\n'
+                                              'Уведомить всех - для рассылки сообщения всем участникам бота; NB: Пересылается только текст\n\n'
+                                              'Инициализация - Платная подписка на рассылки, в базе будет сохранен ваш id, имя, фамилия и username\n\n'
+                                              'Гороскоп - если вам захотелось узнать свою судьбу ¯\_(ツ)_/¯\n\n', reply_markup=gen_markup())
             if message.chat.id in admins:
-                bot.send_message(message.chat.id, 'Лог команд для избранных:\n'
-                                                  '/linkpush - для сохранения ссылки в боте\n'
+                bot.send_message(message.chat.id, 'Лог команд для избранных:\n\n'
+                                                  '/linkpush - для сохранения ссылки в боте\n\n'
                                                   '///позже может появятся ещё///')
         case "Оставить отзыв":
             sent = bot.send_message(message.chat.id,
