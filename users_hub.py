@@ -34,6 +34,7 @@ def sent_notify(message):
                 curr_id = int(row['ID'])
                 bot.send_message(curr_id, f'<u>Общее уведомление от пользователя - '
                                           f'@{message.from_user.username}\n</u>' + msg, parse_mode='html')
+    bot.send_message(message.chat.id, 'Ваше уведомление было отправлено остальным пользователям!')
 
 
 def frw_msg(message):
