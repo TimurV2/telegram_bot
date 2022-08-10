@@ -9,18 +9,18 @@ from bs4 import BeautifulSoup
 
 
 TELEGRAM_TOKEN = str(os.environ['bot_token'])
-urls = ['https://horo.mail.ru/prediction/aries/today/',
-        'https://horo.mail.ru/prediction/taurus/today/',
-        'https://horo.mail.ru/prediction/gemini/today/',
-        'https://horo.mail.ru/prediction/cancer/today/',
-        'https://horo.mail.ru/prediction/leo/today/',
-        'https://horo.mail.ru/prediction/virgo/today/',
-        'https://horo.mail.ru/prediction/libra/today/',
-        'https://horo.mail.ru/prediction/scorpio/today/',
-        'https://horo.mail.ru/prediction/sagittarius/today/',
-        'https://horo.mail.ru/prediction/capricorn/today/',
-        'https://horo.mail.ru/prediction/aquarius/today/',
-        'https://horo.mail.ru/prediction/pisces/today/']
+urls = {'Овен':'https://horo.mail.ru/prediction/aries/today/',
+     'Телец':'https://horo.mail.ru/prediction/taurus/today/',
+     'Близнецы':'https://horo.mail.ru/prediction/gemini/today/',
+     'Рак':'https://horo.mail.ru/prediction/cancer/today/',
+     'Лев':'https://horo.mail.ru/prediction/leo/today/',
+     'Дева':'https://horo.mail.ru/prediction/virgo/today/',
+     'Весы':'https://horo.mail.ru/prediction/libra/today/',
+     'Скорпион':'https://horo.mail.ru/prediction/scorpio/today/',
+     'Стрелец':'https://horo.mail.ru/prediction/sagittarius/today/',
+     'Козерог':'https://horo.mail.ru/prediction/capricorn/today/',
+     'Водолей':'https://horo.mail.ru/prediction/aquarius/today/',
+     'Рыбы':'https://horo.mail.ru/prediction/pisces/today/'}
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 admins = [993945655, 1210574996]
 
@@ -31,7 +31,7 @@ def start(message):
     buttons = ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех", "Гороскоп"]
     keyboard.add(*buttons)
     bot.send_message(message.chat.id, 'Вот что, я могу сделать:\n'
-                                      '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите help</b>',
+                                      '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите "Помощь"</b>',
                      parse_mode='html', reply_markup=keyboard)
 
 
@@ -74,7 +74,7 @@ def text_message_handler(message):
                                               '/start - для вызова меню\n'
                                               'Ссылки - ссылки с важными материалами\n'
                                               'Уведомить всех - для рассылки сообщения всем участникам бота; NB: Пересылается только текст\n'
-                                              'Инициализация - Платная подписка на рассылки, в базе будет сохранен ваш id, имя, фамилия и username')
+                                              'Инициализация - Платная подписка на рассылки, в базе будет сохранен ваш id, имя, фамилия и username\n')
             if message.chat.id in admins:
                 bot.send_message(message.chat.id, 'Лог команд для избранных:\n'
                                                   '/linkpush - для сохранения ссылки в боте\n'
@@ -92,38 +92,13 @@ def text_message_handler(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
     if call.message:
-        match call.data:
-            case "Овен":
-                url = urls[0]
-            case "Телец":
-                url = urls[1]
-            case "Близнецы":
-                url = urls[2]
-            case "Рак":
-                url = urls[3]
-            case "Лев":
-                url = urls[4]
-            case "Дева":
-                url = urls[5]
-            case "Весы":
-                url = urls[6]
-            case "Скорпион":
-                url = urls[7]
-            case "Стрелец":
-                url = urls[8]
-            case "Козерог":
-                url = urls[9]
-            case "Водолей":
-                url = urls[10]
-            case "Рыбы":
-                url = urls[11]
-
+        url = urls[call.data]
         responce = requests.get(url)
         soup = BeautifulSoup(responce.text, 'html.parser')
         prediction = soup.find_all('p')
         prediction[0] = str(prediction[0]).replace('<p>', '').replace('</p>', '')
         prediction[1] = str(prediction[1]).replace('<p>', '').replace('</p>', '')
-        bot.send_message(call.message.chat.id, f'{prediction[0]}\n\n' + f'{prediction[1]}')
+        bot.send_message(call.message.chat.id,'Ваш гороскоп на сегодня:\n\n' + f'{prediction[0]}\n\n' + f'{prediction[1]}')
 
 
 bot.polling(none_stop=True)
