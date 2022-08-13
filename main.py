@@ -3,7 +3,7 @@ import io
 from telebot import types
 from links_funcs import find_url, write_link
 from users_hub import add_user, sent_notify, frw_msg, ask_horo
-from helpful_funcs import gen_markup
+from helpful_funcs import gen_markup, exit_markup
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -63,6 +63,7 @@ def text_message_handler(message):
         case "Уведомить всех":
             sent = bot.send_message(message.chat.id,
                                     '<u>Следующее ваше сообщение</u> будет отправлено всем остальным членам клуба гачи',
+                                    reply_markup=exit_markup(),
                                     parse_mode='html')
             bot.register_next_step_handler(sent, sent_notify)
         case "Помощь":
@@ -81,7 +82,7 @@ def text_message_handler(message):
         case "Оставить отзыв":
             sent = bot.send_message(message.chat.id,
                                     'Оставьте свой <u>отзыв / пожелания</u> в следующем сообщении, '
-                                    'оно будет переслано создателю сего бота.',
+                                    'оно будет переслано создателю сего бота.', reply_markup=exit_markup(),
                                     parse_mode='html')
             bot.register_next_step_handler(sent, frw_msg)
         case "Гороскоп":
@@ -100,4 +101,5 @@ def callback(call):
         bot.send_message(call.message.chat.id,'Ваш гороскоп на сегодня:\n\n' + f'{prediction[0]}\n\n' + f'{prediction[1]}')
 
 
-bot.polling(none_stop=True)
+if __name__ == '__main__':
+    bot.polling(none_stop=True)

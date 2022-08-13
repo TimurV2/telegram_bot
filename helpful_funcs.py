@@ -6,3 +6,10 @@ def gen_markup():
     keyboard.resize_keyboard = True
     keyboard.add(*buttons)
     return keyboard
+
+def exit_markup():
+    keyboard = ReplyKeyboardMarkup()
+    button = "Отменить"
+    keyboard.resize_keyboard = True
+    keyboard.add(button)
+    return keyboard

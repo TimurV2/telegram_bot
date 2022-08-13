@@ -28,6 +28,8 @@ def add_user(user_id, first_name, last_name, user_name):
 def sent_notify(message):
     msg = message.text
     avoid_id = message.chat.id
+    if message.text == "Отменить":
+        return bot.send_message(message.chat.id, 'Действие отменено!', reply_markup=gen_markup())
     with open('users_hub.csv', 'r') as readable_file:
         reader = csv.DictReader(readable_file)
         for row in reader:
@@ -39,6 +41,9 @@ def sent_notify(message):
 
 
 def frw_msg(message):
+    if message.text == "Отменить":
+        return bot.send_message(message.chat.id, 'Действие отменено!', reply_markup=gen_markup())
+
     if (message.chat.id != 993945655) and (message.text not in ["Ссылки", "Контакты", "Инициализация", "Оставить отзыв", "Помощь", "Уведомить всех", "Гороскоп"]):
         bot.forward_message(993945655, message.chat.id, message.message_id)
         bot.send_message(message.chat.id, 'Ваше сообщение было отправлено. Спасибо за обратную связь!', reply_markup=gen_markup())
