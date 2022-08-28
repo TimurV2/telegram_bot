@@ -4,7 +4,7 @@ from telebot import types
 from helpful_funcs import gen_markup
 import os
 
-TELEGRAM_TOKEN = str(os.environ['bot_token'])
+TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 

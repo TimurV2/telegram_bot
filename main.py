@@ -1,6 +1,5 @@
 import telebot
 import io
-from telebot import types
 from links_funcs import find_url, write_link
 from users_hub import add_user, sent_notify, frw_msg, ask_horo
 from helpful_funcs import gen_markup, exit_markup
@@ -8,20 +7,19 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-
-TELEGRAM_TOKEN = str(os.environ['bot_token'])
-urls = {'Овен':'https://horo.mail.ru/prediction/aries/today/',
-     'Телец':'https://horo.mail.ru/prediction/taurus/today/',
-     'Близнецы':'https://horo.mail.ru/prediction/gemini/today/',
-     'Рак':'https://horo.mail.ru/prediction/cancer/today/',
-     'Лев':'https://horo.mail.ru/prediction/leo/today/',
-     'Дева':'https://horo.mail.ru/prediction/virgo/today/',
-     'Весы':'https://horo.mail.ru/prediction/libra/today/',
-     'Скорпион':'https://horo.mail.ru/prediction/scorpio/today/',
-     'Стрелец':'https://horo.mail.ru/prediction/sagittarius/today/',
-     'Козерог':'https://horo.mail.ru/prediction/capricorn/today/',
-     'Водолей':'https://horo.mail.ru/prediction/aquarius/today/',
-     'Рыбы':'https://horo.mail.ru/prediction/pisces/today/'}
+TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
+urls = {'Овен': 'https://horo.mail.ru/prediction/aries/today/',
+        'Телец': 'https://horo.mail.ru/prediction/taurus/today/',
+        'Близнецы': 'https://horo.mail.ru/prediction/gemini/today/',
+        'Рак': 'https://horo.mail.ru/prediction/cancer/today/',
+        'Лев': 'https://horo.mail.ru/prediction/leo/today/',
+        'Дева': 'https://horo.mail.ru/prediction/virgo/today/',
+        'Весы': 'https://horo.mail.ru/prediction/libra/today/',
+        'Скорпион': 'https://horo.mail.ru/prediction/scorpio/today/',
+        'Стрелец': 'https://horo.mail.ru/prediction/sagittarius/today/',
+        'Козерог': 'https://horo.mail.ru/prediction/capricorn/today/',
+        'Водолей': 'https://horo.mail.ru/prediction/aquarius/today/',
+        'Рыбы': 'https://horo.mail.ru/prediction/pisces/today/'}
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 admins = [993945655, 1210574996]
 
@@ -29,13 +27,14 @@ admins = [993945655, 1210574996]
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id, 'Вот что, я могу сделать:\n'
-                                      '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите "Помощь"</b>',
-                     parse_mode='html', reply_markup=gen_markup())
+                                      '<b>Если вам пока не известно, что могут те или иные кнопки, нажмите "Помощь"</b>'
+                     , parse_mode='html', reply_markup=gen_markup())
 
 
 @bot.message_handler(commands=['linkpush'])  # пуш ссылки по команде /linkpush
 def link_push(message):
-    sent = bot.send_message(message.chat.id, 'В <u>одном сообщении</u> введите ссылку и затем её описание', parse_mode='html')
+    sent = bot.send_message(message.chat.id, 'В <u>одном сообщении</u> введите ссылку и затем её описание',
+                            parse_mode='html')
     bot.register_next_step_handler(sent, find_url)
 
 
@@ -46,7 +45,7 @@ def text_message_handler(message):
             links_msg = write_link()
             bot.send_message(message.chat.id, links_msg, reply_markup=gen_markup())
         case "Контакты":
-            path = r'C:\\Users\\1\\PycharmProjects\\telegram_bot\\contacts.txt'
+            path = 'contacts.txt'
             with io.open(path, encoding='utf-8') as file:
                 text = file.read()
                 bot.send_message(message.chat.id, text, reply_markup=gen_markup())
@@ -74,7 +73,8 @@ def text_message_handler(message):
                                               'Ссылки - ссылки с важными материалами\n\n'
                                               'Уведомить всех - для рассылки сообщения всем участникам бота; NB: Пересылается только текст\n\n'
                                               'Инициализация - Платная подписка на рассылки, в базе будет сохранен ваш id, имя, фамилия и username\n\n'
-                                              'Гороскоп - если вам захотелось узнать свою судьбу ¯\_(ツ)_/¯\n\n', reply_markup=gen_markup())
+                                              'Гороскоп - если вам захотелось узнать свою судьбу ¯\_(ツ)_/¯\n\n',
+                             reply_markup=gen_markup())
             if message.chat.id in admins:
                 bot.send_message(message.chat.id, 'Лог команд для избранных:\n\n'
                                                   '/linkpush - для сохранения ссылки в боте\n\n'
@@ -98,7 +98,8 @@ def callback(call):
         prediction = soup.find_all('p')
         prediction[0] = str(prediction[0]).replace('<p>', '').replace('</p>', '')
         prediction[1] = str(prediction[1]).replace('<p>', '').replace('</p>', '')
-        bot.send_message(call.message.chat.id,'Ваш гороскоп на сегодня:\n\n' + f'{prediction[0]}\n\n' + f'{prediction[1]}')
+        bot.send_message(call.message.chat.id,
+                         'Ваш гороскоп на сегодня:\n\n' + f'{prediction[0]}\n\n' + f'{prediction[1]}')
 
 
 if __name__ == '__main__':
