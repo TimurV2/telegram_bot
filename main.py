@@ -7,7 +7,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-TELEGRAM_TOKEN = '5444360230:AAGk1s7gRrfW87b0MnCuMe5q974Hz1Gke7E'
+TELEGRAM_TOKEN = '*******************************************'
 urls = {'Овен': 'https://horo.mail.ru/prediction/aries/today/',
         'Телец': 'https://horo.mail.ru/prediction/taurus/today/',
         'Близнецы': 'https://horo.mail.ru/prediction/gemini/today/',
